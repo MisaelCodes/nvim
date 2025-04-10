@@ -20,7 +20,7 @@ return {
         "williamboman/mason-lspconfig.nvim",
         config = function()
             require("mason-lspconfig").setup({
-                ensure_installed={ "gopls", "lua_ls" }
+                ensure_installed={ "gopls", "lua_ls", "pyright" }
             })
         end
     },
@@ -29,10 +29,13 @@ return {
     -- communication with the ls
     {
         "neovim/nvim-lspconfig",
+        dependencies = {'saghen/blink.cmp'},
         config = function()
             local lspconfig = require("lspconfig")
+            local capabilities = require('blink.cmp').get_lsp_capabilities()
             lspconfig.lua_ls.setup({})
             lspconfig.gopls.setup({})
+            lspconfig.pyright.setup({capabilities=capabilities})
             vim.keymap.set('n', 'K', vim.lsp.buf.hover, {})
             vim.keymap.set('n', 'gd', vim.lsp.buf.definition, {})
             vim.keymap.set({'n','v'}, '<leader>ca', vim.lsp.buf.code_action, {})

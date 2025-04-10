@@ -48,11 +48,14 @@ require("lazy").setup({
 	-- automatically check for plugin updates
 	checker = { enabled = true },
 })
+-- Finders like grep and Neotree
 local builtin = require("telescope.builtin")
 vim.keymap.set("n", "<C-p>", builtin.find_files, {})
 vim.keymap.set("n", "<leader>fg", builtin.live_grep, {})
 vim.keymap.set("n", "<leader>cf", ":Neotree filesystem reveal right<CR>", {})
 vim.keymap.set("n", "<leader>cfr", ":Neotree toggle position=right<CR>", {})
+
+-- Terminal
 vim.keymap.set("n", "<leader>st", function()
 	vim.cmd.vnew()
 	vim.cmd.term()
@@ -62,15 +65,26 @@ end)
 vim.keymap.set("t", "<C-X>", "<C-\\><C-n>:q<CR>", { noremap = true, silent = true })
 
 vim.keymap.set("t", "<Esc>", "<C-\\><C-n>", { noremap = true, silent = true })
-require("dapui").setup()
-vim.keymap.set("n", "<leader>dk", function()
-	require("dap").continue()
-end)
--- vim.keymap.set(n, '<leader>dl', function() require('dap').run_last() end)
-vim.keymap.set("n", "<leader>b", function()
-	require("dap").toggle_breakpoint()
-end)
+
+-- Debugger Stuff
 local dap, dapui = require("dap"), require("dapui")
+dapui.setup()
+
+-- Debugger keymaps
+vim.keymap.set("n", "<F5>", dap.continue)
+-- vim.keymap.set(n, '<leader>dl', function() require('dap').run_last() end)
+vim.keymap.set("n", "<leader>b", dap.toggle_breakpoint)
+vim.keymap.set("n", "<F6>", dap.step_into)
+vim.keymap.set("n", "<F7>", dap.step_over)
+vim.keymap.set("n", "<F8>", dap.step_out)
+vim.keymap.set("n", "<F9>", dap.step_back)
+vim.keymap.set("n", "<F10>", dap.terminate)
+-- Eval var under cursor
+vim.keymap.set("n", "<space>?", function()
+	require("dapui").eval(nil, { enter = true })
+end)
+
+-- Debugger ui behaviour on events
 dap.listeners.after.event_initialized["dapui_config"] = function()
 	dapui.open()
 end
@@ -91,3 +105,5 @@ require("dap-go").setup({
 		},
 	},
 })
+local debugpy = os.getenv("DEBUGPY")
+require("dap-python").setup(debugpy)
