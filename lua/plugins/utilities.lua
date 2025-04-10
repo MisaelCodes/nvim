@@ -62,4 +62,11 @@ return {
 			require("telescope").load_extension("ui-select")
 		end,
 	},
+	{
+		"mfussenegger/nvim-dap",
+	},
+	{
+		"leoluz/nvim-dap-go",
+	},
+	{ "rcarriga/nvim-dap-ui", dependencies = { "mfussenegger/nvim-dap", "nvim-neotest/nvim-nio" } },
 }

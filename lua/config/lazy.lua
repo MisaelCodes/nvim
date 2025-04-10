@@ -8,7 +8,7 @@ vim.opt.number = true
 vim.opt.relativenumber = true
 
 vim.api.nvim_create_autocmd("TermOpen", {
-    pattern = '*',
+	pattern = "*",
 	group = vim.api.nvim_create_augroup("custom-term-open", { clear = true }),
 	callback = function()
 		vim.opt.number = false
@@ -54,12 +54,40 @@ vim.keymap.set("n", "<leader>fg", builtin.live_grep, {})
 vim.keymap.set("n", "<leader>cf", ":Neotree filesystem reveal right<CR>", {})
 vim.keymap.set("n", "<leader>cfr", ":Neotree toggle position=right<CR>", {})
 vim.keymap.set("n", "<leader>st", function()
-    vim.cmd.vnew()
-    vim.cmd.term()
-    vim.cmd.wincmd("J")
-    vim.api.nvim_win_set_height(0,5)
+	vim.cmd.vnew()
+	vim.cmd.term()
+	vim.cmd.wincmd("J")
+	vim.api.nvim_win_set_height(0, 5)
 end)
-vim.keymap.set('t', '<C-X>', '<C-\\><C-n>:q<CR>', { noremap = true, silent = true })
+vim.keymap.set("t", "<C-X>", "<C-\\><C-n>:q<CR>", { noremap = true, silent = true })
 
-vim.keymap.set('t', '<Esc>', '<C-\\><C-n>', { noremap = true, silent = true })
-
+vim.keymap.set("t", "<Esc>", "<C-\\><C-n>", { noremap = true, silent = true })
+require("dapui").setup()
+vim.keymap.set("n", "<leader>dk", function()
+	require("dap").continue()
+end)
+-- vim.keymap.set(n, '<leader>dl', function() require('dap').run_last() end)
+vim.keymap.set("n", "<leader>b", function()
+	require("dap").toggle_breakpoint()
+end)
+local dap, dapui = require("dap"), require("dapui")
+dap.listeners.after.event_initialized["dapui_config"] = function()
+	dapui.open()
+end
+dap.listeners.before.event_terminated["dapui_config"] = function()
+	dapui.close()
+end
+dap.listeners.before.event_exited["dapui_config"] = function()
+	dapui.close()
+end
+require("dap-go").setup({
+	dap_configurations = {
+		{
+			type = "go",
+			name = "Debug",
+			request = "launch",
+			program = "${file}",
+			dlvFlags = { "--check-go-version=false" },
+		},
+	},
+})
